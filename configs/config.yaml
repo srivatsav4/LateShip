@@ -1,0 +1,83 @@
+# LateShip configuration. Everything tunable lives here; code reads it via src.config.load_config().
+project:
+  name: lateship
+  model_version: "lateship-1.0.0"
+
+seed: 42
+
+data:
+  source: demo                 # demo | olist  (CLI --source overrides)
+  raw_dir: data/raw            # place the Olist CSVs here (gitignored)
+  demo_dir: data/demo          # synthetic DEMO data (generated, gitignored)
+  processed_dir: data/processed
+  demo:                        # parameters of the synthetic generator (DEMO DATA only)
+    n_orders: 12000
+    n_sellers: 60
+    n_customers: 5000
+    start: "2017-01-01"
+    months: 24
+
+features:
+  history_window_days: 30      # window for seller_orders_last_30d (purchase-time workload proxy)
+  min_category_count: 30       # rarer categories are collapsed into "other" (fit on TRAIN only)
+
+split:
+  train_frac: 0.70             # used to infer cutoffs from the actual purchase-time distribution
+  val_frac: 0.15               # test gets the remainder
+  min_orders_per_month: 100    # leading/trailing months below this are treated as sparse and trimmed
+  gap_days: 0                  # optional purge gap between splits
+  train_end: null              # optional explicit overrides (ISO date). null = infer
+  val_end: null
+
+model:
+  lgbm:                        # fixed parameters (grid below varies a few of them)
+    n_estimators: 300
+    subsample: 0.8
+    subsample_freq: 1
+    colsample_bytree: 0.8
+    reg_lambda: 1.0
+    n_jobs: 1                  # single thread => deterministic
+  grid:                        # deliberately small, time-aware (forward-chaining CV on TRAIN)
+    num_leaves: [15, 31]
+    learning_rate: [0.03, 0.08]
+    min_child_samples: [50]
+  cv_splits: 3
+  logreg:
+    max_iter: 1000
+    C: 1.0
+
+calibration:
+  methods: [sigmoid, isotonic]  # "none" (raw probabilities) is always evaluated too
+  cv_folds: 3                   # contiguous folds on the validation set
+
+threshold:
+  strategy: cost               # cost | precision  (operating-threshold policy)
+  target_precision: 0.50       # ASSUMPTION: precision an ops team could tolerate
+  cost_false_negative: 5.0     # ASSUMPTION (arbitrary units): a missed late order costs 5x ...
+  cost_false_positive: 1.0     # ASSUMPTION: ... an unnecessary proactive alert
+  grid_step: 0.01
+
+risk:                          # NOT industry standards; derived from the operating threshold
+  medium_fraction: 0.5         # MEDIUM if p >= medium_fraction * operating_threshold
+  actions:
+    LOW: NO_ACTION
+    MEDIUM: MONITOR_ORDER
+    HIGH: PROACTIVE_ALERT
+
+monitoring:
+  psi_bins: 10
+  psi_warn: 0.10
+  psi_alert: 0.25
+
+error_analysis:
+  min_segment_size: 30
+  top_k_segments: 15
+
+mlflow:
+  enabled: true
+  tracking_uri: "sqlite:///mlflow.db"
+  experiment: lateship
+
+paths:
+  models_dir: models
+  reports_dir: reports

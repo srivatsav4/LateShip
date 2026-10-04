@@ -1,0 +1,27 @@
+# data (never commit raw Olist data)
+data/*
+!data/README.md
+*.csv
+*.parquet
+# python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+# experiment tracking
+.mlflow/
+mlruns/
+mlflow.db
+*.log
+# secrets / OS
+.env
+.DS_Store
+# generated artifacts (regenerate with `make demo` / `make train`)
+models/*
+!models/README.md
+reports/*
+!reports/README.md
+lateship.zip

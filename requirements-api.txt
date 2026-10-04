@@ -1,0 +1,13 @@
+# Runtime dependencies for serving (used by the Dockerfile)
+numpy>=1.26
+pandas>=2.1
+scipy>=1.11
+scikit-learn>=1.4
+lightgbm>=4.3
+shap>=0.45
+matplotlib>=3.8
+pyyaml>=6.0
+joblib>=1.3
+fastapi>=0.110
+uvicorn>=0.29
+pydantic>=2.6

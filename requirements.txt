@@ -1,0 +1,4 @@
+# Full pipeline (features, training, evaluation, MLflow, API)
+-r requirements-api.txt
+pyarrow>=14.0
+mlflow>=2.12

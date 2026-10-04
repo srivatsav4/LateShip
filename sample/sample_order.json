@@ -1,0 +1,17 @@
+{
+  "estimated_delivery_days": 18.0,
+  "seller_customer_distance_km": 1450.0,
+  "freight_value": 31.5,
+  "product_price": 129.9,
+  "product_weight": 1800,
+  "product_volume": 24000,
+  "product_category": "furniture_decor",
+  "purchase_weekday": 4,
+  "purchase_month": 11,
+  "seller_state": "SP",
+  "customer_state": "BA",
+  "item_count": 1,
+  "seller_hist_order_count": 220,
+  "seller_hist_late_rate": 0.14,
+  "seller_orders_last_30d": 35
+}

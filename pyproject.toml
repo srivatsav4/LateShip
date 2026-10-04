@@ -1,0 +1,22 @@
+[project]
+name = "lateship"
+version = "1.0.0"
+description = "Leakage-safe, calibrated delivery risk intelligence platform (Olist)"
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+dashboard = ["streamlit>=1.30"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning", "ignore::FutureWarning"]
+
+[tool.ruff]
+line-length = 130
+target-version = "py310"
+extend-exclude = ["mlruns"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501", "E701"]
